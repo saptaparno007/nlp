@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snippet Clipboard</title>
+    <style>
+      :root {
+        --bg: #000;
+        --card: #111;
+        --card-border: #444;
+        --text: #fff;
+        --shadow: rgba(255, 255, 255, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .app {
+        width: min(100%, 520px);
+        text-align: center;
+      }
+
+      .title {
+        margin: 0 0 20px;
+        font-size: clamp(1.4rem, 2vw, 2rem);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(72px, 1fr));
+        gap: 18px;
+        justify-content: center;
+      }
+
+      .snippet-card {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1;
+        border: 1px solid var(--card-border);
+        border-radius: 18px;
+        background: var(--card);
+        color: var(--text);
+        font-size: clamp(1.2rem, 2vw, 1.7rem);
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        cursor: pointer;
+        transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+      }
+
+      .snippet-card:hover {
+        transform: translateY(-2px);
+        border-color: #fff;
+        box-shadow: 0 12px 22px var(--shadow);
+      }
+
+      .snippet-card:active {
+        transform: scale(0.97);
+      }
+
+      .snippet-card.copied {
+        background: #222;
+        border-color: #fff;
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25), 0 12px 24px rgba(255, 255, 255, 0.12);
+      }
+
+      .label {
+        display: grid;
+        place-items: center;
+        width: 100%;
+        height: 100%;
+      }
+
+      @media (max-width: 480px) {
+        .grid {
+          grid-template-columns: repeat(3, minmax(74px, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <h1 class="title">Code Snippets</h1>
+      <div id="snippetGrid" class="grid" aria-label="Snippet selector"></div>
+    </main>
+
+    <script>
+      const snippets = [
+        {
+          id: "p5a",
+          code: String.raw`import nltk
+from nltk.util import ngrams
+
+nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True)
+
+text = "The quick brown fox jumps over the lazy dog"
+tokens = nltk.word_tokenize(text)
+
+def generate_ngrams(tokens, n):
+    return list(ngrams(tokens, n))
+
+for i in range(1, 4):
+    for gram in generate_ngrams(tokens, i):
+        print(gram)
+    print("---")`
+        },
+        {
+          id: "p5b",
+          code: String.raw`from collections import Counter
+
+corpus = [
+    'This is a dog',
+    'This is a cat',
+    'I love my cat',
+    'This is my name',
+]
+
+
+def get_bigrams(words):
+    return [(words[i], words[i + 1]) for i in range(len(words) - 1)]
+
+
+words = [w for sentence in corpus for w in sentence.lower().split()]
+bigrams = get_bigrams(words)
+
+unigram_counts = Counter(words)
+bigram_counts = Counter(bigrams)
+
+bigram_prob = {
+    bg: count / unigram_counts[bg[0]] for bg, count in bigram_counts.items()
+}
+
+test_sentence = "This is my cat"
+test_words = test_sentence.lower().split()
+test_bigrams = get_bigrams(test_words)
+
+prob = 1.0
+for bg in test_bigrams:
+    prob *= bigram_prob.get(bg, 0.0)
+
+print("All possible bigrams:")
+print(bigrams)
+
+print("\nUnigrams with counts:")
+print(dict(unigram_counts))
+
+print("\nBigrams with counts:")
+print(dict(bigram_counts))
+
+print("\nBigrams with probability:")
+print(bigram_prob)
+
+print("\nBigrams in test sentence:")
+print(test_bigrams)
+
+print(f'\nFinal probability of sentence "{test_sentence}":')
+print(prob)`
+        },
+        {
+          id: "p6",
+          code: String.raw`import stanza
+
+stanza.download('en', verbose=False)
+
+nlp = stanza.Pipeline(lang='en', processors='tokenize,ner', verbose=False)
+
+
+def extract_named_entities(text):
+    doc = nlp(text)
+    entities = [(ent.text, ent.type) for ent in doc.entities]
+    return entities
+
+
+documents = [
+    "Barack Obama was the 44th President of the United States.",
+    "Microsoft was founded by Bill Gates in 1975.",
+    "The Taj Mahal is located in India.",
+]
+
+for i, doc in enumerate(documents):
+    entities = extract_named_entities(doc)
+    print(f"\nDocument {i+1}:")
+    print(f"Named Entities: {entities}")`
+        },
+        {
+          id: "p7",
+          code: String.raw`from collections import Counter
+import nltk
+from nltk.corpus import reuters, stopwords
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+nltk.download('stopwords', quiet=True)
+nltk.download('reuters', quiet=True)
+nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True)
+
+stop_words = set(stopwords.words('english'))
+documents = [reuters.raw(fid) for fid in reuters.fileids()[:100]]
+
+
+def stopword_frequency(documents):
+    counts = Counter()
+    for doc in documents:
+        words = nltk.word_tokenize(doc.lower())
+        counts.update(w for w in words if w in stop_words)
+    return counts
+
+
+stopword_counts = stopword_frequency(documents)
+print("Most Frequently Occurring Stopwords:")
+print(stopword_counts.most_common(10))
+
+
+def compute_tf_idf(documents):
+    vectorizer = TfidfVectorizer(stop_words='english')
+    matrix = vectorizer.fit_transform(documents)
+    words = vectorizer.get_feature_names_out()
+    scores = [round(float(s), 4) for s in matrix[0].toarray()[0]]
+    return sorted(zip(words, scores), key=lambda x: x[1], reverse=True)
+
+
+tfidf_results = compute_tf_idf(documents)
+print("\nTop 10 Important Words Based on TF-IDF:")
+print(tfidf_results[:10])`
+        },
+        {
+          id: "p8",
+          code: String.raw`import nltk
+from nltk.corpus import movie_reviews
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+
+nltk.download('movie_reviews', quiet=True)
+
+docs, labels = [], []
+for category in ['pos', 'neg']:
+    for fileid in movie_reviews.fileids(category):
+        docs.append(movie_reviews.raw(fileid))
+        labels.append(category)
+
+model = make_pipeline(TfidfVectorizer(stop_words='english'), MultinomialNB())
+model.fit(docs, labels)
+
+test_sentences = [
+    "I absolutely loved this movie!",
+    "This was the worst film I've ever seen.",
+    "The storyline was decent, but the acting could have been better.",
+]
+
+print("Sentiment Analysis Predictions:\n")
+for sentence in test_sentences:
+    pred = model.predict([sentence])[0]
+    sentiment = "POSITIVE" if pred == 'pos' else "NEGATIVE"
+    print(f'Text      : "{sentence}"')
+    print(f"Sentiment: {sentiment}\n")`
+        }
+      ];
+
+      const grid = document.getElementById("snippetGrid");
+
+      snippets.forEach(({ id, code }) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "snippet-card";
+        button.setAttribute("aria-label", `Copy snippet ${id}`);
+
+        const label = document.createElement("span");
+        label.className = "label";
+        label.textContent = id;
+        button.appendChild(label);
+
+        button.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(code);
+            flash(button, "Copied!");
+          } catch (error) {
+            flash(button, "Failed");
+          }
+        });
+
+        grid.appendChild(button);
+      });
+
+      function flash(button, message) {
+        const label = button.querySelector(".label");
+        const original = label.textContent;
+
+        button.classList.add("copied");
+        label.textContent = message;
+
+        setTimeout(() => {
+          button.classList.remove("copied");
+          label.textContent = original;
+        }, 1200);
+      }
+    </script>
+  </body>
+</html>

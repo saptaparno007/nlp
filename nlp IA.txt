@@ -1,0 +1,180 @@
+program 5a
+
+import nltk
+from nltk.util import ngrams
+
+nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True)
+
+text = "The quick brown fox jumps over the lazy dog"
+tokens = nltk.word_tokenize(text)
+
+def generate_ngrams(tokens, n):
+    return list(ngrams(tokens, n))
+
+for i in range(1, 4):
+    for gram in generate_ngrams(tokens, i):
+        print(gram)
+    print("---")
+
+program 5b
+
+from collections import Counter
+
+corpus = [
+    'This is a dog',
+    'This is a cat',
+    'I love my cat',
+    'This is my name',
+]
+
+
+def get_bigrams(words):
+    return [(words[i], words[i + 1]) for i in range(len(words) - 1)]
+
+
+words = [w for sentence in corpus for w in sentence.lower().split()]
+bigrams = get_bigrams(words)
+
+unigram_counts = Counter(words)
+bigram_counts = Counter(bigrams)
+
+bigram_prob = {
+    bg: count / unigram_counts[bg[0]] for bg, count in bigram_counts.items()
+}
+
+test_sentence = "This is my cat"
+test_words = test_sentence.lower().split()
+test_bigrams = get_bigrams(test_words)
+
+prob = 1.0
+for bg in test_bigrams:
+    prob *= bigram_prob.get(bg, 0.0)
+
+print("All possible bigrams:")
+print(bigrams)
+
+print("\nUnigrams with counts:")
+print(dict(unigram_counts))
+
+print("\nBigrams with counts:")
+print(dict(bigram_counts))
+
+print("\nBigrams with probability:")
+print(bigram_prob)
+
+print("\nBigrams in test sentence:")
+print(test_bigrams)
+
+print(f'\nFinal probability of sentence "{test_sentence}":')
+print(prob)
+
+
+
+program 6
+
+import stanza
+
+stanza.download('en', verbose=False)
+
+nlp = stanza.Pipeline(lang='en', processors='tokenize,ner', verbose=False)
+
+
+def extract_named_entities(text):
+    doc = nlp(text)
+    entities = [(ent.text, ent.type) for ent in doc.entities]
+    return entities
+
+
+documents = [
+    "Barack Obama was the 44th President of the United States.",
+    "Microsoft was founded by Bill Gates in 1975.",
+    "The Taj Mahal is located in India.",
+]
+
+for i, doc in enumerate(documents):
+    entities = extract_named_entities(doc)
+    print(f"\nDocument {i+1}:")
+    print(f"Named Entities: {entities}")
+
+
+
+
+program 7
+
+from collections import Counter
+import nltk
+from nltk.corpus import reuters, stopwords
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+nltk.download('stopwords', quiet=True)
+nltk.download('reuters', quiet=True)
+nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True)
+
+stop_words = set(stopwords.words('english'))
+documents = [reuters.raw(fid) for fid in reuters.fileids()[:100]]
+
+
+def stopword_frequency(documents):
+    counts = Counter()
+    for doc in documents:
+        words = nltk.word_tokenize(doc.lower())
+        counts.update(w for w in words if w in stop_words)
+    return counts
+
+
+stopword_counts = stopword_frequency(documents)
+print("Most Frequently Occurring Stopwords:")
+print(stopword_counts.most_common(10))
+
+
+def compute_tf_idf(documents):
+    vectorizer = TfidfVectorizer(stop_words='english')
+    matrix = vectorizer.fit_transform(documents)
+    words = vectorizer.get_feature_names_out()
+    scores = [round(float(s), 4) for s in matrix[0].toarray()[0]]
+    return sorted(zip(words, scores), key=lambda x: x[1], reverse=True)
+
+
+tfidf_results = compute_tf_idf(documents)
+print("\nTop 10 Important Words Based on TF-IDF:")
+print(tfidf_results[:10])
+
+
+
+
+program 8
+
+import nltk
+from nltk.corpus import movie_reviews
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+
+nltk.download('movie_reviews', quiet=True)
+
+docs, labels = [], []
+for category in ['pos', 'neg']:
+    for fileid in movie_reviews.fileids(category):
+        docs.append(movie_reviews.raw(fileid))
+        labels.append(category)
+
+model = make_pipeline(TfidfVectorizer(stop_words='english'), MultinomialNB())
+model.fit(docs, labels)
+
+test_sentences = [
+    "I absolutely loved this movie!",
+    "This was the worst film I've ever seen.",
+    "The storyline was decent, but the acting could have been better.",
+]
+
+print("Sentiment Analysis Predictions:\n")
+for sentence in test_sentences:
+    pred = model.predict([sentence])[0]
+    sentiment = "POSITIVE" if pred == 'pos' else "NEGATIVE"
+    print(f'Text      : "{sentence}"')
+    print(f"Sentiment: {sentiment}\n")
+
+
+
