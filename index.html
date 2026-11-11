@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Untitled - Jupyter Notebook</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #111;
+      background: #eee;
+      font-synthesis: none;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 700px;
+      background: #eee;
+      font-size: 16px;
+    }
+
+    button, select { font: inherit; }
+
+    .topbar {
+      height: 80px;
+      padding: 0 2.6%;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 13px;
+      color: #555;
+      text-decoration: none;
+      flex: 0 0 auto;
+    }
+
+    .jupyter-mark {
+      width: 43px;
+      height: 43px;
+      display: inline-block;
+      flex: 0 0 auto;
+    }
+
+    .brand-word {
+      font-size: 32px;
+      font-weight: 400;
+      letter-spacing: -.8px;
+    }
+
+    .notebook-name {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      min-width: 0;
+      white-space: nowrap;
+    }
+
+    .notebook-name input {
+      width: 128px;
+      min-width: 90px;
+      padding: 0;
+      border: 0;
+      outline: 0;
+      color: #111;
+      background: transparent;
+      font-size: 30px;
+      line-height: 1.2;
+    }
+
+    .checkpoint {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 22px;
+    }
+
+    .header-spacer { flex: 1; }
+
+    .python-logo {
+      width: 52px;
+      height: 52px;
+      flex: 0 0 auto;
+    }
+
+    .logout {
+      padding: 8px 17px;
+      border: 1px solid #bbb;
+      border-radius: 1px;
+      background: #fff;
+      font-size: 22px;
+      box-shadow: 0 1px 2px #ddd;
+    }
+
+    .menubar {
+      height: 63px;
+      margin: 0 2.6%;
+      padding: 0 15px;
+      display: flex;
+      align-items: stretch;
+      gap: 5px;
+      background: #f7f7f7;
+      border: 1px solid #ddd;
+      border-top: 0;
+    }
+
+    .menu-wrap { position: relative; display: flex; }
+
+    .menu-button {
+      min-width: 89px;
+      padding: 0 13px;
+      border: 0;
+      background: transparent;
+      color: #666;
+      font-size: 23px;
+      cursor: pointer;
+    }
+
+    .menu-button:hover,
+    .menu-button[aria-expanded="true"] { background: #e9e9e9; color: #222; }
+
+    .dropdown {
+      position: absolute;
+      z-index: 5;
+      top: calc(100% - 1px);
+      left: 0;
+      min-width: 205px;
+      padding: 5px 0;
+      display: none;
+      background: #fff;
+      border: 1px solid #bbb;
+      box-shadow: 0 4px 10px #0002;
+    }
+
+    .menu-wrap.open .dropdown { display: block; }
+
+    .dropdown button {
+      width: 100%;
+      padding: 8px 14px;
+      border: 0;
+      background: #fff;
+      text-align: left;
+      font-size: 15px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .dropdown button:hover { background: #eee; }
+    .dropdown hr { margin: 4px 0; border: 0; border-top: 1px solid #ddd; }
+
+    .toolbar {
+      height: 68px;
+      padding: 10px 2.6%;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tool-group { display: flex; align-items: center; }
+
+    .tool-button {
+      width: 58px;
+      height: 47px;
+      margin-right: 8px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #c8c8c8;
+      border-radius: 4px;
+      background: linear-gradient(#fff, #fafafa);
+      color: #333;
+      box-shadow: 0 1px 2px #ddd;
+      cursor: pointer;
+    }
+
+    .tool-button:hover { background: #eee; }
+    .tool-button:active { background: #ddd; }
+    .tool-button svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .tool-button .solid { fill: currentColor; stroke: none; }
+    .tool-button.glyph { font-size: 34px; font-weight: 700; line-height: 1; }
+    .tool-button.small-glyph { font-size: 28px; }
+
+    .cell-type {
+      width: 217px;
+      height: 47px;
+      margin-left: 0;
+      padding: 0 12px;
+      border: 1px solid #c8c8c8;
+      border-radius: 7px;
+      background: #fff;
+      color: #444;
+      font-size: 22px;
+      box-shadow: 0 1px 2px #ddd;
+    }
+
+    .keyboard-button { margin-left: 11px; }
+    .toolbar-spacer { flex: 1; }
+
+    .kernel-status {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: #777;
+      font-size: 21px;
+      white-space: nowrap;
+    }
+
+    .trusted {
+      padding: 6px 11px;
+      border: 1px solid #bbb;
+      background: #fff;
+      color: #444;
+      font-size: 18px;
+    }
+
+    .edit-pencil { color: #888; font-size: 24px; }
+    .kernel-divider { height: 34px; margin: 0 2px; border-left: 1px solid #999; }
+    .kernel-circle { width: 22px; height: 22px; border: 3px solid #888; border-radius: 50%; }
+
+    main {
+      min-height: calc(100vh - 211px);
+      padding: 38px 2.6% 80px;
+      background: #eee;
+    }
+
+    .cell {
+      position: relative;
+      min-height: 104px;
+      padding: 20px 28px;
+      background: #fff;
+      box-shadow: 0 7px 17px #00000019;
+      cursor: text;
+    }
+
+    .cell.selected .input-row {
+      border: 1px solid #60b464;
+      border-left: 9px solid #60b464;
+    }
+
+    .input-row {
+      min-height: 60px;
+      padding: 6px 11px 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .prompt {
+      flex: 0 0 164px;
+      color: #303f9f;
+      text-align: right;
+      font-family: monospace;
+      font-size: 22px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .input-area {
+      width: 100%;
+      min-height: 42px;
+      padding: 6px 9px;
+      resize: vertical;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      outline: none;
+      background: #f7f7f7;
+      color: #222;
+      font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+      font-size: 15px;
+      line-height: 1.5;
+      box-shadow: inset 0 1px 1px #00000012;
+    }
+
+    .input-area:focus { border-color: #bbb; }
+
+    .output {
+      display: none;
+      margin: 9px 0 0 178px;
+      font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .cell.command-mode { outline: 1px solid #aaa; }
+
+    @media (max-width: 1250px) {
+      .toolbar { padding: 10px 18px; }
+      .tool-button { width: 43px; margin-right: 4px; }
+      .cell-type { width: 130px; font-size: 18px; }
+      .kernel-status { gap: 6px; font-size: 16px; }
+      .trusted { padding: 5px 7px; font-size: 15px; }
+      .kernel-circle { width: 17px; height: 17px; }
+      .keyboard-button { margin-left: 4px; }
+    }
+
+    @media (max-width: 900px) {
+      .topbar { padding: 0 18px; gap: 12px; }
+      .brand-word { font-size: 25px; }
+      .checkpoint { display: none; }
+      .menubar { margin: 0 18px; padding: 0 5px; }
+      .menu-button { min-width: auto; font-size: 18px; padding: 0 10px; }
+      .toolbar { padding: 10px 12px; overflow-x: hidden; }
+      .tool-button { width: 38px; margin-right: 2px; }
+      .cell-type { width: 105px; }
+      .keyboard-button { margin-left: 2px; }
+      .kernel-status { font-size: 16px; }
+      .kernel-status > :not(:nth-child(4)) { display: none; }
+      main { padding: 28px 18px; }
+      .cell { padding: 24px 18px; }
+      .prompt { flex-basis: 100px; }
+      .output { margin-left: 112px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Jupyter home">
+      <svg class="jupyter-mark" viewBox="0 0 48 48" role="img" aria-label="Jupyter">
+        <path d="M6.5 16.5C11.1 10.8 17.3 8 24 8s12.9 2.8 17.5 8.5M6.5 31.5C11.1 37.2 17.3 40 24 40s12.9-2.8 17.5-8.5" fill="none" stroke="#f37726" stroke-width="4.3" stroke-linecap="round"/>
+        <circle cx="7" cy="8" r="2.2" fill="#777"/>
+        <circle cx="41" cy="8" r="2.2" fill="#777"/>
+        <circle cx="7" cy="40" r="2.2" fill="#777"/>
+        <circle cx="41" cy="40" r="2.2" fill="#777"/>
+      </svg>
+      <span class="brand-word">jupyter</span>
+    </a>
+    <div class="notebook-name">
+      <input id="notebook-title" value="Untitled" aria-label="Notebook name">
+      <span class="checkpoint">Last Checkpoint: <span id="checkpoint-time">a few seconds ago</span> (unsaved changes)</span>
+    </div>
+    <span class="header-spacer"></span>
+    <img class="python-logo" src="download.jpg" alt="Python">
+    <button class="logout" type="button">Logout</button>
+  </header>
+
+  <nav class="menubar" aria-label="Notebook menus">
+    <div class="menu-wrap"><button class="menu-button" aria-expanded="false">File</button><div class="dropdown">
+      <button data-action="new">New Notebook</button><button data-action="save">Save and Checkpoint</button><hr><button data-action="rename">Rename...</button><button data-action="download">Download as HTML</button>
+    </div></div>
+    <div class="menu-wrap"><button class="menu-button" aria-expanded="false">Edit</button><div class="dropdown">
+      <button data-action="insert">Insert Cell Below</button><button data-action="cut">Cut Cells</button><button data-action="copy">Copy Cells</button><button data-action="paste">Paste Cells</button><hr><button data-action="delete">Delete Cells</button>
+    </div></div>
+    <div class="menu-wrap"><button class="menu-button" aria-expanded="false">View</button><div class="dropdown">
+      <button data-action="toggle-toolbar">Toggle Toolbar</button><button data-action="toggle-header">Toggle Header</button><button data-action="cell-toolbar">Cell Toolbar</button>
+    </div></div>
+    <div class="menu-wrap"><button class="menu-button" aria-expanded="false">Insert</button><div class="dropdown">
+      <button data-action="insert">Insert Cell Above</button><button data-action="insert">Insert Cell Below</button>
+    </div></div>
+    <div class="menu-wrap"><button class="menu-button" aria-expanded="false">Cell</button><div class="dropdown">
+      <button data-action="run">Run Cells</button><button data-action="run">Run Cells and Select Below</button><hr><button data-action="type-code">Cell Type: Code</button><button data-action="type-markdown">Cell Type: Markdown</button>
+    </div></div>
+    <div class="menu-wrap"><button class="menu-button" aria-expanded="false">Kernel</button><div class="dropdown">
+      <button data-action="interrupt">Interrupt</button><button data-action="restart">Restart</button><button data-action="restart">Restart &amp; Clear Output</button>
+    </div></div>
+    <div class="menu-wrap"><button class="menu-button" aria-expanded="false">Widgets</button><div class="dropdown">
+      <button data-action="widget-save">Save Notebook Widget State</button><button data-action="widget-clear">Clear Notebook Widget State</button>
+    </div></div>
+    <div class="menu-wrap"><button class="menu-button" aria-expanded="false">Help</button><div class="dropdown">
+      <button data-action="keyboard">Keyboard Shortcuts</button><button data-action="about">About Jupyter</button>
+    </div></div>
+  </nav>
+
+  <section class="toolbar" aria-label="Notebook toolbar">
+    <div class="tool-group">
+      <button class="tool-button" data-action="save" aria-label="Save and checkpoint" title="Save and Checkpoint">
+        <svg viewBox="0 0 28 28"><path d="M4 3h16l4 4v18H4z"/><path d="M8 3v8h12V3M8 25v-9h12v9"/></svg>
+      </button>
+      <button class="tool-button glyph" data-action="insert" aria-label="Insert cell below" title="Insert Cell Below">+</button>
+      <button class="tool-button" data-action="cut" aria-label="Cut cells" title="Cut Cells">
+        <svg viewBox="0 0 28 28"><circle cx="7" cy="7" r="3"/><circle cx="7" cy="21" r="3"/><path d="m10 9 13 13M10 19 23 6M14 14l-3 3"/></svg>
+      </button>
+      <button class="tool-button" data-action="copy" aria-label="Copy cells" title="Copy Cells">
+        <svg viewBox="0 0 28 28"><path d="M9 8V4h15v17h-4M4 9h15v16H4z"/></svg>
+      </button>
+      <button class="tool-button" data-action="paste" aria-label="Paste cells" title="Paste Cells">
+        <svg viewBox="0 0 28 28"><path d="M9 5h14v19H7V7h2M11 3h7v5h-7zM10 14h10M10 18h10"/></svg>
+      </button>
+    </div>
+    <div class="tool-group">
+      <button class="tool-button" data-action="move-up" aria-label="Move cell up" title="Move Cell Up">
+        <svg viewBox="0 0 28 28"><path d="M14 24V4M6 12l8-8 8 8"/></svg>
+      </button>
+      <button class="tool-button" data-action="move-down" aria-label="Move cell down" title="Move Cell Down">
+        <svg viewBox="0 0 28 28"><path d="M14 4v20M6 16l8 8 8-8"/></svg>
+      </button>
+    </div>
+    <div class="tool-group">
+      <button class="tool-button" data-action="run" aria-label="Run cell" title="Run Cell (Shift+Enter)">
+        <svg viewBox="0 0 28 28"><path class="solid" d="M8 3 23 14 8 25z"/></svg>
+      </button>
+      <button class="tool-button" data-action="interrupt" aria-label="Interrupt kernel" title="Interrupt Kernel">
+        <svg viewBox="0 0 28 28"><path class="solid" d="M5 5h18v18H5z"/></svg>
+      </button>
+      <button class="tool-button" data-action="restart" aria-label="Restart kernel" title="Restart Kernel">
+        <svg viewBox="0 0 28 28"><path d="M23 11a10 10 0 0 0-18-4L3 10"/><path d="M3 4v6h6M5 17a10 10 0 0 0 18 4l2-3"/><path d="M25 24v-6h-6"/></svg>
+      </button>
+    </div>
+    <select class="cell-type" id="cell-type" aria-label="Cell type">
+      <option>Code</option><option>Markdown</option><option>Raw NBConvert</option>
+    </select>
+    <button class="tool-button keyboard-button" data-action="keyboard" aria-label="Keyboard shortcuts" title="Keyboard Shortcuts">
+      <svg viewBox="0 0 28 28"><rect x="2" y="6" width="24" height="16" rx="1"/><path d="M6 10h1m3 0h1m3 0h1m3 0h1m3 0h1M6 14h1m3 0h1m3 0h1m3 0h1m3 0h1M8 18h12"/></svg>
+    </button>
+    <span class="toolbar-spacer"></span>
+    <div class="kernel-status">
+      <span class="trusted">Trusted</span>
+      <span class="edit-pencil" aria-hidden="true">✎</span>
+      <span class="kernel-divider"></span>
+      <span>Python 3</span>
+      <span class="kernel-circle" title="Kernel idle"></span>
+    </div>
+  </section>
+
+  <main id="notebook">
+    <article class="cell selected edit-mode" tabindex="0">
+      <div class="input-row">
+        <div class="prompt">In&nbsp;[&nbsp;]:</div>
+        <textarea class="input-area" rows="1" spellcheck="false" aria-label="Python code cell"></textarea>
+      </div>
+      <pre class="output"></pre>
+    </article>
+  </main>
+
+  <script src="programs.js"></script>
+  <script>
+    const notebook = document.querySelector("#notebook");
+    const titleInput = document.querySelector("#notebook-title");
+    let activeCell = document.querySelector(".cell");
+    let executionCount = 0;
+    let savedCellText = "";
+
+    function selectCell(cell, edit = false) {
+      document.querySelectorAll(".cell").forEach((item) => {
+        item.classList.remove("selected", "edit-mode", "command-mode");
+      });
+      activeCell = cell;
+      cell.classList.add("selected", edit ? "edit-mode" : "command-mode");
+      if (edit) cell.querySelector(".input-area").focus();
+    }
+
+    function addCell(after = activeCell) {
+      const cell = document.createElement("article");
+      cell.className = "cell selected edit-mode";
+      cell.tabIndex = 0;
+      cell.innerHTML = '<div class="input-row"><div class="prompt">In&nbsp;[&nbsp;]:</div><textarea class="input-area" rows="1" spellcheck="false" aria-label="Python code cell"></textarea></div><pre class="output"></pre>';
+      after.after(cell);
+      selectCell(cell, true);
+    }
+
+    async function copyProgramCode(programId, programCode, output) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(programCode);
+        } else {
+          const clipboardInput = document.createElement("textarea");
+          clipboardInput.value = programCode;
+          clipboardInput.setAttribute("readonly", "");
+          clipboardInput.style.position = "fixed";
+          clipboardInput.style.opacity = "0";
+          document.body.append(clipboardInput);
+          clipboardInput.select();
+          const copied = document.execCommand("copy");
+          clipboardInput.remove();
+          if (!copied) throw new Error("The browser denied clipboard access.");
+        }
+      } catch (error) {
+        output.textContent = `${programId}\nCould not copy program code. Allow clipboard access and try again. ${error.message}`;
+      }
+      output.style.display = "block";
+    }
+
+    function runCell() {
+      const input = activeCell.querySelector(".input-area");
+      const output = activeCell.querySelector(".output");
+      const code = input.value.trim();
+      const prompt = activeCell.querySelector(".prompt");
+      const printString = code.match(/^print\s*\(\s*(['"])(.*?)\1\s*\)\s*;?$/);
+      let outputText = "";
+      let programToCopy;
+
+      if (printString) {
+        const printedText = printString[2];
+        const programId = printedText.toUpperCase();
+        const program = window.NLP_PROGRAMS[programId];
+        outputText = printedText;
+        if (program) {
+          programToCopy = { id: programId, code: program.code };
+        }
+      }
+
+      executionCount += 1;
+      prompt.textContent = `In [${executionCount}]:`;
+      output.textContent = outputText;
+      output.style.display = outputText ? "block" : "none";
+      activeCell.classList.remove("edit-mode");
+      activeCell.classList.add("command-mode");
+      if (programToCopy) copyProgramCode(programToCopy.id, programToCopy.code, output);
+    }
+
+    function perform(action) {
+      if (action === "insert" || action === "new") addCell();
+      if (action === "run") runCell();
+      if (action === "save") {
+        savedCellText = [...document.querySelectorAll(".input-area")].map((area) => area.value).join("\n");
+        document.querySelector("#checkpoint-time").textContent = "a few seconds ago";
+        document.querySelector(".checkpoint").textContent = "Last Checkpoint: a few seconds ago";
+      }
+      if (action === "delete") {
+        if (document.querySelectorAll(".cell").length > 1) {
+          const next = activeCell.nextElementSibling || activeCell.previousElementSibling;
+          activeCell.remove();
+          selectCell(next, false);
+        } else {
+          activeCell.querySelector(".input-area").value = "";
+          activeCell.querySelector(".output").style.display = "none";
+        }
+      }
+      if (action === "cut") {
+        savedCellText = activeCell.querySelector(".input-area").value;
+        perform("delete");
+      }
+      if (action === "copy") savedCellText = activeCell.querySelector(".input-area").value;
+      if (action === "paste") activeCell.querySelector(".input-area").value = savedCellText;
+      if (action === "move-up" && activeCell.previousElementSibling) {
+        notebook.insertBefore(activeCell, activeCell.previousElementSibling);
+      }
+      if (action === "move-down" && activeCell.nextElementSibling) {
+        notebook.insertBefore(activeCell.nextElementSibling, activeCell);
+      }
+      if (action === "interrupt" || action === "restart") {
+        document.querySelector(".kernel-circle").style.borderColor = "#888";
+        if (action === "restart") {
+          document.querySelectorAll(".output").forEach((output) => {
+            output.textContent = "";
+            output.style.display = "none";
+          });
+          executionCount = 0;
+          document.querySelectorAll(".prompt").forEach((prompt) => prompt.innerHTML = "In&nbsp;[&nbsp;]:");
+        }
+      }
+      if (action === "rename") titleInput.focus();
+      if (action === "type-markdown") document.querySelector("#cell-type").value = "Markdown";
+      if (action === "type-code") document.querySelector("#cell-type").value = "Code";
+      if (action === "keyboard") window.alert("Shift+Enter: run cell and select below\nEnter: edit selected cell\nEsc: command mode\nA / B: insert cell above / below");
+      if (action === "about") window.alert("Jupyter Notebook\nA browser-based interactive computing environment.");
+    }
+
+    document.querySelectorAll(".menu-button").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        const wrap = event.currentTarget.parentElement;
+        const isOpen = wrap.classList.contains("open");
+        document.querySelectorAll(".menu-wrap").forEach((menu) => {
+          menu.classList.remove("open");
+          menu.querySelector(".menu-button").setAttribute("aria-expanded", "false");
+        });
+        if (!isOpen) {
+          wrap.classList.add("open");
+          button.setAttribute("aria-expanded", "true");
+        }
+      });
+    });
+
+    document.addEventListener("click", (event) => {
+      const actionButton = event.target.closest("[data-action]");
+      if (actionButton) {
+        perform(actionButton.dataset.action);
+        document.querySelectorAll(".menu-wrap").forEach((menu) => {
+          menu.classList.remove("open");
+          menu.querySelector(".menu-button").setAttribute("aria-expanded", "false");
+        });
+      } else if (!event.target.closest(".menu-wrap")) {
+        document.querySelectorAll(".menu-wrap").forEach((menu) => {
+          menu.classList.remove("open");
+          menu.querySelector(".menu-button").setAttribute("aria-expanded", "false");
+        });
+      }
+    });
+
+    notebook.addEventListener("click", (event) => {
+      const cell = event.target.closest(".cell");
+      if (cell) selectCell(cell, event.target.matches(".input-area"));
+    });
+
+    notebook.addEventListener("keydown", (event) => {
+      const cell = event.target.closest(".cell");
+      if (!cell) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        selectCell(cell, false);
+      } else if (event.key === "Enter" && event.target.classList.contains("input-area") && !event.shiftKey) {
+        const area = event.target;
+        if (area.selectionStart === area.selectionEnd && area.selectionStart === area.value.length) {
+          area.style.height = "auto";
+          area.style.height = `${area.scrollHeight}px`;
+        }
+      } else if (event.key === "Enter" && event.target === cell && !event.shiftKey) {
+        event.preventDefault();
+        selectCell(cell, true);
+      } else if ((event.key === "b" || event.key === "B") && document.activeElement === cell) {
+        event.preventDefault();
+        addCell(cell);
+      } else if (event.shiftKey && event.key === "Enter") {
+        event.preventDefault();
+        runCell();
+        addCell(activeCell);
+      }
+    });
+  </script>
+</body>
+</html>
